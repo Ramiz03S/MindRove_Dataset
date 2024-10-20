@@ -8,15 +8,18 @@ from PySide6.QtGui import QPixmap, QScreen
 from PySide6.QtCore import QObject, Signal, Qt
 
 class trigger_communicator(QObject):
-    trigger_signal = Signal(int)
+    update_image_signal = Signal(int)
+    toggle_image_signal = Signal()
     stop_signal = Signal()
+    toggle_cross_signal = Signal()
 
 class TriggeredImageApp(QWidget):
     def __init__(self, communicator):
         super().__init__()
         
         self.setWindowTitle('MindRove Dataset')
-        self.setGeometry(400,400,600,600)
+        self.setGeometry(400,400,1000,1000)
+        self.setStyleSheet("background-color: white;")
         
         self.cross = QLabel(parent=self)
         self.label = QLabel(parent=self)
@@ -24,19 +27,33 @@ class TriggeredImageApp(QWidget):
         # vlayout = QVBoxLayout()
         hlayout = QHBoxLayout()
         # layout.addWidget(self.cross)
+        hlayout.addWidget(self.cross, alignment=Qt.AlignCenter)
         hlayout.addWidget(self.label, alignment=Qt.AlignCenter)
         # vlayout.addLayout(hlayout)
         # vlayout.alignment(Qt.AlignCenter)
         self.setLayout(hlayout)
         
         self.images = [QPixmap('right.png'),QPixmap('left.png')]
-        communicator.trigger_signal.connect(self.update_image)
+        self.cross.setPixmap(QPixmap('cross.png').scaled(400,400))
+        
+        communicator.update_image_signal.connect(self.update_image)
+        communicator.toggle_image_signal.connect(self.toggle_image)
         communicator.stop_signal.connect(self.close_window)
+        communicator.toggle_cross_signal.connect(self.toggle_cross)
 
     def update_image(self, trigger_class):
-
-        self.label.setPixmap(self.images[trigger_class].scaled(600,600))
-    
+        self.label.setPixmap(self.images[trigger_class].scaled(400,400))
+    def toggle_image(self):
+        if self.label.isVisible():
+            self.label.hide()
+        else:
+            self.label.show()
+    def toggle_cross(self):
+        if self.cross.isVisible():
+            self.cross.hide()
+        else:
+            self.cross.show()
+        
     def close_window(self):
         self.label.setText("RUN ENDED")
         self.close()
@@ -165,13 +182,18 @@ class TriggeredImageApp(QWidget):
 #     #arc_board.release_session()
 
 def trigger_signal_generator(communicator):
-    trigger_list = [0] * 12 + [1] * 12
+    trigger_list = [0] * 2 + [1] * 2
     random.shuffle(trigger_list)
     start_time = time.time()
     for trigger in trigger_list:
         print(time.time()-start_time)
+        communicator.toggle_cross_signal.emit()
+        time.sleep(2)
+        communicator.toggle_cross_signal.emit()
+        communicator.update_image_signal.emit(trigger)
         time.sleep(4)
-        communicator.trigger_signal.emit(trigger)
+        communicator.toggle_image_signal.emit()
+        time.sleep(2)
     
     communicator.stop_signal.emit()
     

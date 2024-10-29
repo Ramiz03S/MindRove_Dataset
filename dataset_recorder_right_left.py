@@ -3,7 +3,6 @@ import sys
 import time
 import random
 import threading
-from queue import Queue
 import os
 import numpy as np
 from PySide6.QtWidgets import QApplication, QLabel, QWidget, QHBoxLayout
@@ -91,42 +90,37 @@ def trigger_signal_generator(communicator,subject_number,run_number):
     
     trigger_list = [0] * 12 + [1] * 12
     random.shuffle(trigger_list)
-    
+
     arc.prepare_session()
-    arc.start_streaming()
     initial_time = time.time()
+    arc.start_streaming()
+    
     for trigger in trigger_list:
         communicator.update_image_signal.emit(2) #cross
         communicator.sound_signal.emit()
-        
         time.sleep(3)
         
         communicator.update_image_signal.emit(trigger)
         arc.BEEP_BOOP(trigger)
-        
         time.sleep(5)
         
         communicator.update_image_signal.emit(3)
-        
         time.sleep(2)
-    arc.stop_streaming()
+    
     run_time = time.time() - initial_time
     
+    eeg_data = (arc.record_window(run_time+100)).T
+    np.savetxt(f'subject_recordings//S_{subject_number:02d}//right_left//run_{run_number}.csv', eeg_data, delimiter=',')
     
     communicator.stop_signal.emit()
-    
-    eeg_data = arc.record_window(run_time)
-    np.savetxt(f'subject_recordings//S_{subject_number:02d}//right_left//run_{run_number}.csv',eeg_data,delimiter=',')
-    # queue.put(arc)
-    # queue.put(run_time)
-    
+    arc.stop_streaming()
     arc.release_session()
     
 if __name__ == "__main__":
     
     
-    subject_number = 0
-    run_number = 0
+    subject_number = 
+    run_number = 
     
     
     app = QApplication(sys.argv)
@@ -134,7 +128,6 @@ if __name__ == "__main__":
     user_window = User_Interface(communicator)
     
     user_window.showMaximized()
-    thread_queue = Queue()
     trigger_thread = threading.Thread(target=trigger_signal_generator, args=(communicator,subject_number,run_number,))
     trigger_thread.start()
     

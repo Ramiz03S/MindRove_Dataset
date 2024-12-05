@@ -66,10 +66,11 @@ class arc_board:
     
     def record_window(self, window_size):
         num_points = int(window_size * self.sampling_rate)
-        data = self.board_shim.get_board_data(num_points)
-        eeg_data = data[self.eeg_channels]
+        data = self.board_shim.get_current_board_data(num_points)
+        eeg_data = np.array(data) 
+        eeg_data1 = eeg_data[[0,1,2,3,4,5,6,7,19]]
         
-        return eeg_data
+        return eeg_data1
     
     def BEEP_BOOP(self, trigger_class):
         if trigger_class == 0:
@@ -109,9 +110,10 @@ def trigger_signal_generator(communicator,subject_number,run_number):
     
     run_time = time.time() - initial_time
     
-    eeg_data = (arc.record_window(run_time+100)).T
+    eeg_data = (arc.record_window(run_time)).T
     np.savetxt(f'subject_recordings//S_{subject_number:02d}//right_left//run_{run_number}.csv', eeg_data, delimiter=',')
     
+    time.sleep(5)
     communicator.stop_signal.emit()
     arc.stop_streaming()
     arc.release_session()
@@ -119,8 +121,8 @@ def trigger_signal_generator(communicator,subject_number,run_number):
 if __name__ == "__main__":
     
     
-    subject_number = 
-    run_number = 
+    subject_number = 7
+    run_number = 4
     
     
     app = QApplication(sys.argv)

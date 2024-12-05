@@ -15,7 +15,7 @@ class trigger_communicator(QObject):
     stop_signal = Signal()
     sound_signal = Signal()
 
-class User_Interface(QWidget):
+class user_interface(QWidget):
     def __init__(self, communicator):
         super().__init__()
         
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     
     app = QApplication(sys.argv)
     communicator = trigger_communicator()
-    user_window = User_Interface(communicator)
+    user_window = user_interface(communicator)
     
     user_window.showMaximized()
     trigger_thread = threading.Thread(target=trigger_signal_generator, args=(communicator,subject_number,run_number,))

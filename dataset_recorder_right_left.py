@@ -49,10 +49,7 @@ class User_Interface(QWidget):
 
 class arc_board:
     def __init__(self, board_shim, board_id):
-        self.board_shim = board_shim
-        self.eeg_channels = BoardShim.get_eeg_channels(board_id)
-        self.eeg_channels.append(19)
-        #self.trigger_channel = [19]
+        self.board_shim = board_shim     
         self.sampling_rate = BoardShim.get_sampling_rate(board_id)
         
     def prepare_session(self):
@@ -67,9 +64,8 @@ class arc_board:
     def record_window(self, window_size):
         num_points = int(window_size * self.sampling_rate)
         data = self.board_shim.get_current_board_data(num_points)
-        eeg_data = np.array(data) 
+        eeg_data = np.array(data)
         eeg_data1 = eeg_data[[0,1,2,3,4,5,6,7,19]]
-        
         return eeg_data1
     
     def BEEP_BOOP(self, trigger_class):
@@ -79,7 +75,7 @@ class arc_board:
             self.board_shim.config_board(MindroveConfigMode.BOOP)
 
 def init_arc():
-    BoardShim.enable_dev_board_logger() # enable logger when developing to catch relevant logs 
+    BoardShim.enable_dev_board_logger()  
     params = MindRoveInputParams() 
     board_id = BoardIds.MINDROVE_WIFI_BOARD
     board_shim = BoardShim(board_id, params)
@@ -121,8 +117,8 @@ def trigger_signal_generator(communicator,subject_number,run_number):
 if __name__ == "__main__":
     
     
-    subject_number = 7
-    run_number = 4
+    subject_number = 
+    run_number = 
     
     
     app = QApplication(sys.argv)

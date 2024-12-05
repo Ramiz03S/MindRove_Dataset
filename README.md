@@ -20,4 +20,5 @@ In between each trial, a saline solution was applied on the scalp directly under
 - Run the program, it will last for 4 minutes
 - The recordings will be saved to a CSV file in a folder in the same directory as the program
 
-  The first 6 coloumns of the CSV file corrospond to the C1, C2, C3, C4, C5, and C6 electrode positions provided by the Arc headset, while the last column represents the trigger signals. These are sent by the headset at the same time the visual cue is shown on the screen.
+The first 6 coloumns of the CSV file corrospond to the C1, C2, C3, C4, C5, and C6 electrode positions provided by the Arc headset, while the last column represents the trigger signals. The triggers are sent by the headset at the same time the visual cue is shown on the screen. For right and left hand runs, the trigger values 1 and 2 corrospond to right and left hand MI respectively. While for both feet and tongue runs, the trigger signals 1 and 2 corrospond to tongue and both feet MI respectively.
+
